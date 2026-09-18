@@ -4,7 +4,7 @@
 #include <string>
 
 class Stock{
-    private
+    private:
     std::string name;
     double price;
 
