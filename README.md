@@ -14,6 +14,7 @@ tests.cpp has 24 tests utilizing the order, the order boook and the engine
 
 // Unit tests for the order book and engine. No external framework needed.
 //
-// Build:  g++ -std=c++17 -Wall -Wextra -pthread tests.cpp Order.cpp OrderBook.cpp Engine.cpp -o tests
 
-// Run:    ./tests        (exit code 0 = all passed)
+Build:  g++ -std=c++17 -Wall -Wextra -pthread tests.cpp Order.cpp OrderBook.cpp Engine.cpp -o tests
+
+Run:    ./tests        (exit code 0 = all passed)
