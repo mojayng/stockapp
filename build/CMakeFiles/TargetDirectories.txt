@@ -1,0 +1,9 @@
+C:/Users/jadso/.vscode/stockapp/build/CMakeFiles/engine_core.dir
+C:/Users/jadso/.vscode/stockapp/build/CMakeFiles/book_demo.dir
+C:/Users/jadso/.vscode/stockapp/build/CMakeFiles/live_demo.dir
+C:/Users/jadso/.vscode/stockapp/build/CMakeFiles/tests.dir
+C:/Users/jadso/.vscode/stockapp/build/CMakeFiles/imgui_lib.dir
+C:/Users/jadso/.vscode/stockapp/build/CMakeFiles/stockapp_gui.dir
+C:/Users/jadso/.vscode/stockapp/build/CMakeFiles/test.dir
+C:/Users/jadso/.vscode/stockapp/build/CMakeFiles/edit_cache.dir
+C:/Users/jadso/.vscode/stockapp/build/CMakeFiles/rebuild_cache.dir

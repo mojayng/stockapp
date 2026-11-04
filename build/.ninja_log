@@ -1,0 +1,23 @@
+# ninja log v7
+15	853	8155331735454041	CMakeFiles/engine_core.dir/Order.cpp.obj	85a8aa3dc132f2f0
+38	1938	8155331735660963	CMakeFiles/engine_core.dir/PriceFeed.cpp.obj	18e3d2dfbb3f3434
+24	2539	8155331735454041	CMakeFiles/engine_core.dir/Orderbook.cpp.obj	5987b2d40c89515b
+31	3790	8155331735556134	CMakeFiles/engine_core.dir/Engine.cpp.obj	af6224497cf8a52a
+2546	4455	8155331760744219	CMakeFiles/book_demo.dir/main.cpp.obj	dc15c4bdd0cdf363
+104	4762	8155331736508163	CMakeFiles/imgui_lib.dir/_deps/imgui-src/backends/imgui_impl_opengl3.cpp.obj	54959bcc3f479ef4
+3815	4948	8155331773482721	libengine_core.a	3515a57b03939dde
+4456	6360	8155331779873205	CMakeFiles/live_demo.dir/live_demo.cpp.obj	6bcb97881f38a248
+4952	7530	8155331784861721	CMakeFiles/stockapp_gui.dir/gui_main.cpp.obj	1f96817b758978fe
+6369	7597	8155331799181136	book_demo.exe	5be52d0c77d53fb6
+87	7824	8155331736187129	CMakeFiles/imgui_lib.dir/_deps/imgui-src/backends/imgui_impl_glfw.cpp.obj	551080c3ae3b4f37
+7544	8184	8155331810826360	live_demo.exe	6a3f720811d6b9f2
+65	8825	8155331735926330	CMakeFiles/imgui_lib.dir/_deps/imgui-src/imgui_tables.cpp.obj	f83288bab0b4e63
+4770	9075	8155331783063867	CMakeFiles/tests.dir/tests.cpp.obj	1533fc4465bed4b4
+9076	9347	8155331826029615	tests.exe	4e2acee2657368a1
+55	11718	8155331735801531	CMakeFiles/imgui_lib.dir/_deps/imgui-src/imgui_draw.cpp.obj	ae170ac2d50dc160
+861	12547	8155331743921391	CMakeFiles/imgui_lib.dir/_deps/implot-src/implot.cpp.obj	78154e1bd7ce91a3
+76	13228	8155331736046683	CMakeFiles/imgui_lib.dir/_deps/imgui-src/imgui_widgets.cpp.obj	1c500b2f4843361c
+46	16444	8155331735730828	CMakeFiles/imgui_lib.dir/_deps/imgui-src/imgui.cpp.obj	c3cf37e92b6d7ddd
+1943	65954	8155331754772565	CMakeFiles/imgui_lib.dir/_deps/implot-src/implot_items.cpp.obj	825d0d9073c99749
+65954	66162	8155332394820952	libimgui_lib.a	b00817bc1e82d701
+66162	66384	8155332396886313	stockapp_gui.exe	2e9e052ef8c0dd22

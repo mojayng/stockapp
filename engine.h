@@ -2,6 +2,7 @@
 #define ENGINE_H
 
 #include <atomic>
+#include <chrono>
 #include <deque>
 #include <mutex>
 #include <string>
@@ -20,6 +21,12 @@ struct Position {
     long long cash = 0;
 };
 
+// One point on the price chart: when a trade happened and the price it printed at.
+struct PricePoint {
+    double time_s = 0.0;  // seconds since the engine was created
+    Price price = 0;     // cents
+};
+
 // A read-only copy of the market at one moment. Other threads (console, GUI)
 // read this; they never touch the order book itself.
 struct MarketSnapshot {
@@ -30,7 +37,7 @@ struct MarketSnapshot {
     std::vector<std::pair<Price, Quantity>> bids;  // best first
     std::vector<std::pair<Price, Quantity>> asks;  // best first
     std::vector<Trade> recent_trades;              // oldest first
-    std::vector<Price> price_history;              // last-trade prices, oldest first
+    std::vector<PricePoint> price_history;         // one point per trade, oldest first
     std::unordered_map<int, Position> positions;   // by trader id
     long long total_trades = 0;
     long long total_volume = 0;
@@ -64,6 +71,9 @@ public:
     // Thread-safe. Returns a copy of the latest published state.
     MarketSnapshot snapshot() const;
 
+    // Thread-safe. Seconds since the engine was created (same clock as PricePoint::time_s).
+    double elapsedSeconds() const;
+
 private:
     struct Request {
         bool is_market = false;
@@ -80,12 +90,13 @@ private:
     ThreadSafeQueue<Request> queue_;
     std::thread worker_;
     std::atomic<bool> running_{false};
+    const std::chrono::steady_clock::time_point start_time_;  // set once, never changes
 
     // ---- touched only by the engine thread ----
     OrderBook book_;
     Price last_price_;
     std::deque<Trade> recent_trades_;
-    std::deque<Price> price_history_;
+    std::deque<PricePoint> price_history_;
     std::unordered_map<int, Position> positions_;
     long long total_trades_ = 0;
     long long total_volume_ = 0;

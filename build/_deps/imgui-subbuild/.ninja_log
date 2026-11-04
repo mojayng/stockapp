@@ -1,0 +1,21 @@
+# ninja log v7
+1	136	8155331300454102	imgui-populate-prefix/src/imgui-populate-stamp/imgui-populate-mkdir	18e07da0d986ecaa
+1	136	8155331300454102	C:/Users/jadso/.vscode/stockapp/build/_deps/imgui-subbuild/imgui-populate-prefix/src/imgui-populate-stamp/imgui-populate-mkdir	18e07da0d986ecaa
+137	7174	8155331370811302	imgui-populate-prefix/src/imgui-populate-stamp/imgui-populate-download	9393363c780de1b6
+137	7174	8155331370811302	C:/Users/jadso/.vscode/stockapp/build/_deps/imgui-subbuild/imgui-populate-prefix/src/imgui-populate-stamp/imgui-populate-download	9393363c780de1b6
+7174	7675	8155331370913678	imgui-populate-prefix/src/imgui-populate-stamp/imgui-populate-update	c50be771d90e3e73
+7174	7675	8155331370913678	C:/Users/jadso/.vscode/stockapp/build/_deps/imgui-subbuild/imgui-populate-prefix/src/imgui-populate-stamp/imgui-populate-update	c50be771d90e3e73
+7677	7760	8155331376708159	imgui-populate-prefix/src/imgui-populate-stamp/imgui-populate-patch	9c9ad10d7a2d40ec
+7677	7760	8155331376708159	C:/Users/jadso/.vscode/stockapp/build/_deps/imgui-subbuild/imgui-populate-prefix/src/imgui-populate-stamp/imgui-populate-patch	9c9ad10d7a2d40ec
+7760	7842	8155331377496885	imgui-populate-prefix/src/imgui-populate-stamp/imgui-populate-configure	b60a71c20c113bc5
+7760	7842	8155331377496885	C:/Users/jadso/.vscode/stockapp/build/_deps/imgui-subbuild/imgui-populate-prefix/src/imgui-populate-stamp/imgui-populate-configure	b60a71c20c113bc5
+7842	7929	8155331378306586	imgui-populate-prefix/src/imgui-populate-stamp/imgui-populate-build	4808932507939a8c
+7842	7929	8155331378306586	C:/Users/jadso/.vscode/stockapp/build/_deps/imgui-subbuild/imgui-populate-prefix/src/imgui-populate-stamp/imgui-populate-build	4808932507939a8c
+7929	8027	8155331379318431	imgui-populate-prefix/src/imgui-populate-stamp/imgui-populate-install	a0e11baf01d5c029
+7929	8027	8155331379318431	C:/Users/jadso/.vscode/stockapp/build/_deps/imgui-subbuild/imgui-populate-prefix/src/imgui-populate-stamp/imgui-populate-install	a0e11baf01d5c029
+8027	8123	8155331380263314	imgui-populate-prefix/src/imgui-populate-stamp/imgui-populate-test	33a9c6f5b56b77a0
+8027	8123	8155331380263314	C:/Users/jadso/.vscode/stockapp/build/_deps/imgui-subbuild/imgui-populate-prefix/src/imgui-populate-stamp/imgui-populate-test	33a9c6f5b56b77a0
+8123	8273	8155331381835265	CMakeFiles/imgui-populate-complete	1bc51394ac8e776c
+8123	8273	8155331381835265	imgui-populate-prefix/src/imgui-populate-stamp/imgui-populate-done	1bc51394ac8e776c
+8123	8273	8155331381835265	C:/Users/jadso/.vscode/stockapp/build/_deps/imgui-subbuild/CMakeFiles/imgui-populate-complete	1bc51394ac8e776c
+8123	8273	8155331381835265	C:/Users/jadso/.vscode/stockapp/build/_deps/imgui-subbuild/imgui-populate-prefix/src/imgui-populate-stamp/imgui-populate-done	1bc51394ac8e776c

@@ -1,0 +1,21 @@
+# ninja log v7
+1	92	8155331385286349	implot-populate-prefix/src/implot-populate-stamp/implot-populate-mkdir	ab8b16517ad89de2
+1	92	8155331385286349	C:/Users/jadso/.vscode/stockapp/build/_deps/implot-subbuild/implot-populate-prefix/src/implot-populate-stamp/implot-populate-mkdir	ab8b16517ad89de2
+93	2476	8155331409031117	implot-populate-prefix/src/implot-populate-stamp/implot-populate-download	bb5394e33d39b269
+93	2476	8155331409031117	C:/Users/jadso/.vscode/stockapp/build/_deps/implot-subbuild/implot-populate-prefix/src/implot-populate-stamp/implot-populate-download	bb5394e33d39b269
+2476	2969	8155331409215494	implot-populate-prefix/src/implot-populate-stamp/implot-populate-update	ff989c99729b5005
+2476	2969	8155331409215494	C:/Users/jadso/.vscode/stockapp/build/_deps/implot-subbuild/implot-populate-prefix/src/implot-populate-stamp/implot-populate-update	ff989c99729b5005
+2970	3050	8155331414884082	implot-populate-prefix/src/implot-populate-stamp/implot-populate-patch	f75bcee3c1c95137
+2970	3050	8155331414884082	C:/Users/jadso/.vscode/stockapp/build/_deps/implot-subbuild/implot-populate-prefix/src/implot-populate-stamp/implot-populate-patch	f75bcee3c1c95137
+3050	3130	8155331415698654	implot-populate-prefix/src/implot-populate-stamp/implot-populate-configure	b637864ce75d51d5
+3050	3130	8155331415698654	C:/Users/jadso/.vscode/stockapp/build/_deps/implot-subbuild/implot-populate-prefix/src/implot-populate-stamp/implot-populate-configure	b637864ce75d51d5
+3131	3210	8155331416417504	implot-populate-prefix/src/implot-populate-stamp/implot-populate-build	6f34ee8b673eb1c5
+3131	3210	8155331416417504	C:/Users/jadso/.vscode/stockapp/build/_deps/implot-subbuild/implot-populate-prefix/src/implot-populate-stamp/implot-populate-build	6f34ee8b673eb1c5
+3210	3292	8155331417311570	implot-populate-prefix/src/implot-populate-stamp/implot-populate-install	3a4bd894feb3321e
+3210	3292	8155331417311570	C:/Users/jadso/.vscode/stockapp/build/_deps/implot-subbuild/implot-populate-prefix/src/implot-populate-stamp/implot-populate-install	3a4bd894feb3321e
+3292	3371	8155331418058643	implot-populate-prefix/src/implot-populate-stamp/implot-populate-test	cfa40b067fb06dd0
+3292	3371	8155331418058643	C:/Users/jadso/.vscode/stockapp/build/_deps/implot-subbuild/implot-populate-prefix/src/implot-populate-stamp/implot-populate-test	cfa40b067fb06dd0
+3372	3475	8155331419110859	CMakeFiles/implot-populate-complete	f1739f091f01a8b3
+3372	3475	8155331419110859	implot-populate-prefix/src/implot-populate-stamp/implot-populate-done	f1739f091f01a8b3
+3372	3475	8155331419110859	C:/Users/jadso/.vscode/stockapp/build/_deps/implot-subbuild/CMakeFiles/implot-populate-complete	f1739f091f01a8b3
+3372	3475	8155331419110859	C:/Users/jadso/.vscode/stockapp/build/_deps/implot-subbuild/implot-populate-prefix/src/implot-populate-stamp/implot-populate-done	f1739f091f01a8b3

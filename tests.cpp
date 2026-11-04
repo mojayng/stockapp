@@ -1,3 +1,8 @@
+// Unit tests for the order book and engine. No external framework needed.
+//
+// Build:  g++ -std=c++17 -Wall -Wextra -pthread tests.cpp Order.cpp OrderBook.cpp Engine.cpp -o tests
+// Run:    ./tests        (exit code 0 = all passed)
+
 #include <functional>
 #include <iostream>
 #include <memory>
@@ -326,6 +331,25 @@ TEST(engine_snapshot_before_any_trade_shows_start_price) {
     const MarketSnapshot s = engine.snapshot();
     CHECK_EQ(s.last_price, 10000);
     CHECK_EQ(s.total_trades, 0);
+}
+
+TEST(engine_records_timestamped_price_history) {
+    Engine engine("AAPL", dollarsToCents(100.00));
+    engine.start();
+    engine.submitLimit(2, S::Sell, 5, dollarsToCents(100.50));
+    engine.submitMarket(1, S::Buy, 5);
+    engine.submitLimit(3, S::Sell, 5, dollarsToCents(100.75));
+    engine.submitMarket(1, S::Buy, 5);
+    engine.stop();
+
+    const MarketSnapshot s = engine.snapshot();
+    CHECK_EQ(s.price_history.size(), 3u);  // opening point + 2 trades
+    CHECK_EQ(s.price_history.front().price, 10000);
+    CHECK_EQ(s.price_history.back().price, 10075);
+    for (std::size_t i = 1; i < s.price_history.size(); ++i) {
+        CHECK(s.price_history[i].time_s >= s.price_history[i - 1].time_s);  // time never goes backwards
+    }
+    CHECK(engine.elapsedSeconds() >= s.price_history.back().time_s);
 }
 
 TEST(engine_handles_many_threads_submitting_at_once) {
