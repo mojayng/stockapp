@@ -7,7 +7,7 @@
 
 namespace {
 constexpr std::size_t kMaxRecentTrades = 50;
-constexpr std::size_t kMaxPriceHistory = 1000;
+constexpr std::size_t kMaxPriceHistory = 5000;
 constexpr int kMaxBatch = 256;  // publish at least this often under heavy load
 }  // namespace
 
@@ -18,7 +18,10 @@ long long MarketSnapshot::pnl(int trader_id) const {
 }
 
 Engine::Engine(std::string symbol, Price start_price)
-    : book_(symbol), last_price_(start_price) {
+    : start_time_(std::chrono::steady_clock::now()),
+      book_(symbol),
+      last_price_(start_price) {
+    price_history_.push_back(PricePoint{0.0, start_price});  // chart starts at the opening price
     snap_.symbol = std::move(symbol);
     snap_.last_price = start_price;
 }
@@ -57,6 +60,10 @@ void Engine::submitMarket(int trader_id, OrderSide side, Quantity quantity) {
     queue_.push(req);
 }
 
+double Engine::elapsedSeconds() const {
+    return std::chrono::duration<double>(std::chrono::steady_clock::now() - start_time_).count();
+}
+
 MarketSnapshot Engine::snapshot() const {
     std::lock_guard<std::mutex> lock(snap_mutex_);
     return snap_;
@@ -85,6 +92,7 @@ void Engine::run() {
 
 void Engine::handle(const Request& req) {
     try {
+        const double now_s = elapsedSeconds();
         std::unique_ptr<Order> order;
         if (req.is_market) {
             order = std::make_unique<MarketOrder>(req.trader_id, book_.getSymbol(),
@@ -101,7 +109,7 @@ void Engine::handle(const Request& req) {
 
             recent_trades_.push_back(t);
             if (recent_trades_.size() > kMaxRecentTrades) recent_trades_.pop_front();
-            price_history_.push_back(t.price);
+            price_history_.push_back(PricePoint{now_s, t.price});
             if (price_history_.size() > kMaxPriceHistory) price_history_.pop_front();
 
             const long long value = static_cast<long long>(t.price) * t.quantity;

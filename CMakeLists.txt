@@ -76,4 +76,10 @@ if(BUILD_GUI)
   add_executable(stockapp_gui gui_main.cpp)
   target_link_libraries(stockapp_gui PRIVATE engine_core imgui_lib)
   target_compile_options(stockapp_gui PRIVATE -Wall -Wextra)
+
+  # On Windows, make sure this links as a normal console program (entry point main(),
+  # not WinMain) so terminal messages stay visible and the link doesn't fail.
+  if(WIN32)
+    target_link_options(stockapp_gui PRIVATE -mconsole)
+  endif()
 endif()
