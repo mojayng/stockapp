@@ -8,6 +8,7 @@
 namespace {
 constexpr std::size_t kMaxRecentTrades = 50;
 constexpr std::size_t kMaxPriceHistory = 5000;
+constexpr std::size_t kMaxFills = 2000;
 constexpr int kMaxBatch = 256;  // publish at least this often under heavy load
 }  // namespace
 
@@ -59,6 +60,8 @@ void Engine::submitMarket(int trader_id, OrderSide side, Quantity quantity) {
     req.quantity = quantity;
     queue_.push(req);
 }
+
+void Engine::trackFills(int trader_id) { tracked_trader_.store(trader_id); }
 
 double Engine::elapsedSeconds() const {
     return std::chrono::duration<double>(std::chrono::steady_clock::now() - start_time_).count();
@@ -119,6 +122,18 @@ void Engine::handle(const Request& req) {
             Position& seller = positions_[t.seller_id];
             seller.shares -= t.quantity;
             seller.cash += value;
+
+            // Remember this trader's fills so the GUI can mark them on the chart.
+            const int tracked = tracked_trader_.load();
+            if (tracked >= 0 && (t.buyer_id == tracked || t.seller_id == tracked)) {
+                const long long position_now = positions_[tracked].shares;
+                auto record = [&](OrderSide side) {
+                    my_fills_.push_back(Fill{now_s, t.price, t.quantity, side, position_now});
+                    if (my_fills_.size() > kMaxFills) my_fills_.pop_front();
+                };
+                if (t.buyer_id == tracked) record(OrderSide::Buy);
+                if (t.seller_id == tracked) record(OrderSide::Sell);
+            }
         }
     } catch (const std::exception& e) {
         // Never let one bad request kill the engine thread.
@@ -136,6 +151,7 @@ void Engine::publish() {
     s.asks = book_.askLevels(10);
     s.recent_trades.assign(recent_trades_.begin(), recent_trades_.end());
     s.price_history.assign(price_history_.begin(), price_history_.end());
+    s.my_fills.assign(my_fills_.begin(), my_fills_.end());
     s.positions = positions_;
     s.total_trades = total_trades_;
     s.total_volume = total_volume_;

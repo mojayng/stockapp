@@ -102,6 +102,53 @@ void drawCandles(const std::vector<Candle>& candles, double interval) {
     ImPlot::PopPlotClipRect();
 }
 
+// Marks your own fills on the chart: green up-triangle = you bought, red down-triangle
+// = you sold. Hover a marker to see the trade and your position afterwards.
+// Must be called inside BeginPlot().
+void drawFillMarkers(const std::vector<Fill>& fills) {
+    if (fills.empty()) return;
+    const ImU32 green = IM_COL32(77, 217, 115, 255);
+    const ImU32 red = IM_COL32(242, 89, 89, 255);
+    const ImU32 outline = IM_COL32(255, 255, 255, 230);
+    const float half_w = 7.0f;   // half the triangle's width, in pixels
+    const float height = 12.0f;  // triangle height, in pixels
+
+    ImDrawList* draw_list = ImPlot::GetPlotDrawList();
+    ImPlot::PushPlotClipRect();
+    const Fill* hovered = nullptr;
+    float best_dist2 = 14.0f * 14.0f;  // only markers within 14 px of the mouse count
+    const ImVec2 mouse = ImGui::GetMousePos();
+
+    for (const Fill& f : fills) {
+        const ImVec2 p = ImPlot::PlotToPixels(f.time_s, usd(f.price));
+        const bool is_buy = f.side == OrderSide::Buy;
+        // The tip sits exactly on the fill price. Buys point up from below, sells point down from above.
+        const float base_y = is_buy ? p.y + height : p.y - height;
+        const ImVec2 tip(p.x, p.y);
+        const ImVec2 left(p.x - half_w, base_y);
+        const ImVec2 right(p.x + half_w, base_y);
+        draw_list->AddTriangleFilled(tip, left, right, is_buy ? green : red);
+        draw_list->AddTriangle(tip, left, right, outline, 1.0f);
+
+        const float cx = p.x;
+        const float cy = (p.y + base_y) * 0.5f;
+        const float dx = mouse.x - cx;
+        const float dy = mouse.y - cy;
+        const float d2 = dx * dx + dy * dy;
+        if (d2 < best_dist2) {
+            best_dist2 = d2;
+            hovered = &f;
+        }
+    }
+    ImPlot::PopPlotClipRect();
+
+    if (hovered != nullptr && ImPlot::IsPlotHovered()) {
+        ImGui::SetTooltip("%s %d @ $%.2f\nt = %.1fs\nposition after: %lld shares",
+                          hovered->side == OrderSide::Buy ? "BUY" : "SELL", hovered->quantity,
+                          usd(hovered->price), hovered->time_s, hovered->position_after);
+    }
+}
+
 void drawPricePanel(const MarketSnapshot& s, double now_s) {
     static float window_seconds = 60.0f;  // how much history the live view shows
     static bool paused = false;           // true = the view stops following; pan and zoom freely
@@ -140,6 +187,9 @@ void drawPricePanel(const MarketSnapshot& s, double now_s) {
     ImGui::SameLine();
     ImGui::Checkbox("Show bid/ask", &show_bid_ask);
     ImGui::SliderFloat("Live window (s)", &window_seconds, 10.0f, 300.0f, "%.0f");
+    ImGui::TextColored(kGreen, "green up-triangle = your buy");
+    ImGui::SameLine();
+    ImGui::TextColored(kRed, "   red down-triangle = your sell   (hover a marker for details)");
 
     // Live view: right edge = now. The left edge never goes below 0 seconds.
     const double x_max = std::max(now_s, static_cast<double>(window_seconds));
@@ -200,6 +250,8 @@ void drawPricePanel(const MarketSnapshot& s, double now_s) {
                 ImPlot::PlotLine("Best ask", xs2, y, 2);
             }
         }
+
+        drawFillMarkers(s.my_fills);
 
         // Grabbing or zooming the chart while live switches to paused, so your
         // own panning isn't overridden on the next frame.
@@ -349,34 +401,72 @@ void drawTradePanel(Engine& engine, PriceFeed& feed, const MarketSnapshot& s,
 void drawTradesPanel(const MarketSnapshot& s) {
     ImGui::SetNextWindowPos(ImVec2(440, 490), ImGuiCond_FirstUseEver);
     ImGui::SetNextWindowSize(ImVec2(830, 300), ImGuiCond_FirstUseEver);
-    ImGui::Begin("Recent Trades");
+    ImGui::Begin("Trades");
 
     ImGui::Text("Total trades: %lld    Volume: %lld shares", s.total_trades, s.total_volume);
 
     const ImGuiTableFlags flags =
         ImGuiTableFlags_RowBg | ImGuiTableFlags_Borders | ImGuiTableFlags_ScrollY;
-    if (ImGui::BeginTable("trades", 4, flags)) {
-        ImGui::TableSetupColumn("Price");
-        ImGui::TableSetupColumn("Shares");
-        ImGui::TableSetupColumn("Buyer");
-        ImGui::TableSetupColumn("Seller");
-        ImGui::TableHeadersRow();
-        int shown = 0;
-        for (auto it = s.recent_trades.rbegin();
-             it != s.recent_trades.rend() && shown < 25; ++it, ++shown) {
-            ImGui::TableNextRow();
-            ImGui::TableSetColumnIndex(0);
-            ImGui::Text("%.2f", usd(it->price));
-            ImGui::TableSetColumnIndex(1);
-            ImGui::Text("%d", it->quantity);
-            ImGui::TableSetColumnIndex(2);
-            if (it->buyer_id == kMe) ImGui::TextColored(kGreen, "YOU");
-            else ImGui::Text("bot");
-            ImGui::TableSetColumnIndex(3);
-            if (it->seller_id == kMe) ImGui::TextColored(kRed, "YOU");
-            else ImGui::Text("bot");
+
+    if (ImGui::BeginTabBar("trade_tabs")) {
+        if (ImGui::BeginTabItem("All trades")) {
+            if (ImGui::BeginTable("trades", 4, flags)) {
+                ImGui::TableSetupColumn("Price");
+                ImGui::TableSetupColumn("Shares");
+                ImGui::TableSetupColumn("Buyer");
+                ImGui::TableSetupColumn("Seller");
+                ImGui::TableHeadersRow();
+                int shown = 0;
+                for (auto it = s.recent_trades.rbegin();
+                     it != s.recent_trades.rend() && shown < 25; ++it, ++shown) {
+                    ImGui::TableNextRow();
+                    ImGui::TableSetColumnIndex(0);
+                    ImGui::Text("%.2f", usd(it->price));
+                    ImGui::TableSetColumnIndex(1);
+                    ImGui::Text("%d", it->quantity);
+                    ImGui::TableSetColumnIndex(2);
+                    if (it->buyer_id == kMe) ImGui::TextColored(kGreen, "YOU");
+                    else ImGui::Text("bot");
+                    ImGui::TableSetColumnIndex(3);
+                    if (it->seller_id == kMe) ImGui::TextColored(kRed, "YOU");
+                    else ImGui::Text("bot");
+                }
+                ImGui::EndTable();
+            }
+            ImGui::EndTabItem();
         }
-        ImGui::EndTable();
+
+        if (ImGui::BeginTabItem("My fills")) {
+            if (s.my_fills.empty()) {
+                ImGui::TextDisabled("No fills yet. Place an order and it will show up here.");
+            } else if (ImGui::BeginTable("fills", 5, flags)) {
+                ImGui::TableSetupColumn("Time (s)");
+                ImGui::TableSetupColumn("Side");
+                ImGui::TableSetupColumn("Shares");
+                ImGui::TableSetupColumn("Price");
+                ImGui::TableSetupColumn("Position after");
+                ImGui::TableHeadersRow();
+                int shown = 0;
+                for (auto it = s.my_fills.rbegin(); it != s.my_fills.rend() && shown < 100;
+                     ++it, ++shown) {
+                    const bool is_buy = it->side == OrderSide::Buy;
+                    ImGui::TableNextRow();
+                    ImGui::TableSetColumnIndex(0);
+                    ImGui::Text("%.1f", it->time_s);
+                    ImGui::TableSetColumnIndex(1);
+                    ImGui::TextColored(is_buy ? kGreen : kRed, "%s", is_buy ? "BUY" : "SELL");
+                    ImGui::TableSetColumnIndex(2);
+                    ImGui::Text("%d", it->quantity);
+                    ImGui::TableSetColumnIndex(3);
+                    ImGui::Text("%.2f", usd(it->price));
+                    ImGui::TableSetColumnIndex(4);
+                    ImGui::Text("%lld", it->position_after);
+                }
+                ImGui::EndTable();
+            }
+            ImGui::EndTabItem();
+        }
+        ImGui::EndTabBar();
     }
     ImGui::End();
 }
@@ -388,6 +478,7 @@ int main() {
     const Price start_price = dollarsToCents(100.00);
     Engine engine("AAPL", start_price);
     PriceFeed feed(engine, start_price);
+    engine.trackFills(kMe);  // record your fills so they can be marked on the chart
     engine.start();
     feed.start();
     bool bot_running = true;

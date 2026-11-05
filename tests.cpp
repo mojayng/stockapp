@@ -352,6 +352,40 @@ TEST(engine_records_timestamped_price_history) {
     CHECK(engine.elapsedSeconds() >= s.price_history.back().time_s);
 }
 
+TEST(engine_records_fills_for_the_tracked_trader_only) {
+    Engine engine("AAPL", dollarsToCents(100.00));
+    engine.trackFills(1);
+    engine.start();
+    engine.submitLimit(2, S::Sell, 10, dollarsToCents(100.00));
+    engine.submitMarket(1, S::Buy, 10);                           // you buy 10 -> position +10
+    engine.submitLimit(3, S::Buy, 4, dollarsToCents(101.00));
+    engine.submitMarket(1, S::Sell, 4);                           // you sell 4 -> position +6
+    engine.submitLimit(5, S::Sell, 3, dollarsToCents(102.00));
+    engine.submitMarket(4, S::Buy, 3);                            // someone else trades: not yours
+    engine.stop();
+
+    const MarketSnapshot s = engine.snapshot();
+    CHECK_EQ(s.my_fills.size(), 2u);
+    CHECK(s.my_fills.at(0).side == S::Buy);
+    CHECK_EQ(s.my_fills.at(0).quantity, 10);
+    CHECK_EQ(s.my_fills.at(0).price, 10000);
+    CHECK_EQ(s.my_fills.at(0).position_after, 10);
+    CHECK(s.my_fills.at(1).side == S::Sell);
+    CHECK_EQ(s.my_fills.at(1).quantity, 4);
+    CHECK_EQ(s.my_fills.at(1).price, 10100);
+    CHECK_EQ(s.my_fills.at(1).position_after, 6);
+    CHECK(s.my_fills.at(1).time_s >= s.my_fills.at(0).time_s);
+}
+
+TEST(engine_records_no_fills_when_nobody_is_tracked) {
+    Engine engine("AAPL", dollarsToCents(100.00));
+    engine.start();
+    engine.submitLimit(2, S::Sell, 10, dollarsToCents(100.00));
+    engine.submitMarket(1, S::Buy, 10);
+    engine.stop();
+    CHECK(engine.snapshot().my_fills.empty());
+}
+
 TEST(engine_handles_many_threads_submitting_at_once) {
     Engine engine("AAPL", dollarsToCents(100.00));
     engine.start();
